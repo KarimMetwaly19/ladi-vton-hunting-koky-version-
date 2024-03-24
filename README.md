@@ -21,7 +21,7 @@ Textual-Inversion Enhanced Virtual Try-On*".
 
 ## Overview
 
-![](assets/teaser.png "Overview of our approach")
+![]( "Overview of our approach")
 
 
 > **Abstract**: <br>
