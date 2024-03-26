@@ -27,6 +27,22 @@ PROJECT_ROOT = Path(__file__).absolute().parents[1].absolute()
 # Will error if the minimal version of diffusers is not installed. Remove at your own risks.
 check_min_version("0.10.0.dev0")
 
+import matplotlib.pyplot as plt
+import numpy as np
+def show_warped_cloth(warped_cloth):
+    print("Size of warped_cloth tensor:", warped_cloth.size())
+    # Assuming warped_cloth is your tensor after all the processing
+    # Convert the tensor to a NumPy array
+    warped_cloth_np = warped_cloth.cpu().numpy()
+    # Normalize the image to the range 0-1
+    warped_cloth_np = (warped_cloth_np + 1) / 2
+    # Transpose the array to (height, width, channels)
+    # This step is necessary for RGB images
+    warped_cloth_np = np.transpose(warped_cloth_np, (1, 2, 0))
+    # Save the image to a file
+    # You can specify the filename and format (e.g., 'warped_cloth.png')
+    plt.imsave('warped_cloth.png', warped_cloth_np)
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Full inference script")
@@ -264,7 +280,9 @@ def main():
         warped_cloth = refinement(warped_cloth.to(torch.float32))
         warped_cloth = warped_cloth.clamp(-1, 1)
         warped_cloth = warped_cloth.to(weight_dtype)
-
+        
+        show_warped_cloth(warped_cloth)
+        
         # Get the visual features of the in-shop cloths
         input_image = torchvision.transforms.functional.resize((cloth + 1) / 2, (224, 224),
                                                                antialias=True).clamp(0, 1)
