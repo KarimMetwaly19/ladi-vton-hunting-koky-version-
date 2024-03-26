@@ -36,12 +36,19 @@ def show_warped_cloth(warped_cloth):
     warped_cloth_np = warped_cloth.cpu().numpy()
     # Normalize the image to the range 0-1
     warped_cloth_np = (warped_cloth_np + 1) / 2
-    # Transpose the array to (height, width, channels)
-    # This step is necessary for RGB images
-    warped_cloth_np = np.transpose(warped_cloth_np, (1, 2, 0))
+    # Assuming warped_cloth_np has dimensions (batch_size, channels, height, width)
+    # Select the first image from the batch
+    first_image = warped_cloth_np[0]
+    
+    # Now, transpose the first image to (height, width, channels)
+    first_image_transposed = np.transpose(first_image, (1, 2, 0))
+    
+    # Normalize the image to the range 0-1
+    first_image_transposed = (first_image_transposed + 1) / 2
+    
     # Save the image to a file
-    # You can specify the filename and format (e.g., 'warped_cloth.png')
-    plt.imsave('/kaggle/working/warped_cloth.png', warped_cloth_np)
+    plt.imsave('/kaggle/working/warped_cloth.png', first_image_transposed)
+
 
 
 def parse_args():
