@@ -41,7 +41,7 @@ def show_warped_cloth(warped_cloth):
     warped_cloth_np = np.transpose(warped_cloth_np, (1, 2, 0))
     # Save the image to a file
     # You can specify the filename and format (e.g., 'warped_cloth.png')
-    plt.imsave('warped_cloth.png', warped_cloth_np)
+    plt.imsave('/kaggle/working/warped_cloth.png', warped_cloth_np)
 
 
 def parse_args():
