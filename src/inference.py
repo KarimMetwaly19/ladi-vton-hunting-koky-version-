@@ -99,7 +99,7 @@ def parse_args():
     parser.add_argument('--dresscode_dataroot', type=str, help='DressCode dataroot')
     parser.add_argument('--vitonhd_dataroot', type=str, help='VitonHD dataroot')
 
-    parser.add_argument("--num_workers", type=int, default=8, help="Number of workers for the dataloader")
+    parser.add_argument("--num_workers", type=int, default=4, help="Number of workers for the dataloader")
 
     parser.add_argument("--num_vstar", default=16, type=int, help="Number of predicted v* images to use")
     parser.add_argument("--test_order", type=str, required=True, choices=["unpaired", "paired"])
