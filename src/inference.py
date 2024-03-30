@@ -281,16 +281,13 @@ def main():
                                                                 antialias=True).permute(0, 2, 3, 1)
 
         warped_cloth = F.grid_sample(cloth.to(torch.float32), highres_grid.to(torch.float32), padding_mode='border')
-        print("1. Size of warped_cloth tensor:", warped_cloth.size())
+        # MUST Provide Precomputed warped clothing image see VitonHDDataset class at line 136 to run next line correctly
+        # warped_cloth = batch.get("warped_cloth").to(weight_dtype) 
         # Refine the warped cloth using the refinement network
         warped_cloth = torch.cat([im_mask, pose_map, warped_cloth], 1)
-        print("2. Size of warped_cloth tensor: ", warped_cloth.size())
         warped_cloth = refinement(warped_cloth.to(torch.float32))
-        print("3. Size of warped_cloth tensor: ", warped_cloth.size())
         warped_cloth = warped_cloth.clamp(-1, 1)
-        print("4. Size of warped_cloth tensor:", warped_cloth.size())
         warped_cloth = warped_cloth.to(weight_dtype)
-        print("5. Size of warped_cloth tensor: ", warped_cloth.size())
         # Get the visual features of the in-shop cloths
         input_image = torchvision.transforms.functional.resize((cloth + 1) / 2, (224, 224),
                                                                antialias=True).clamp(0, 1)
