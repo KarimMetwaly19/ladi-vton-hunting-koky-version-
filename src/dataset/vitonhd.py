@@ -139,6 +139,7 @@ class VitonHDDataset(data.Dataset):
                 # warped_cloth = Image.open(
                 #     os.path.join(PROJECT_ROOT, 'data', 'warped_cloths_unpaired', 'vitonhd', category,
                 #                  im_name.replace(".jpg", "") + "_" + c_name))
+                print('Precomputed warped clothing image is loaded')
                 warped_cloth = Image.open('/kaggle/input/warping-results-mody-cloth-mask/01181_00.jpg')
                 warped_cloth = warped_cloth.resize((self.width, self.height))
                 warped_cloth = self.transform(warped_cloth)  # [-1,1]
