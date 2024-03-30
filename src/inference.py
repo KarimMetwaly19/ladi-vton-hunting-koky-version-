@@ -262,9 +262,9 @@ def main():
         # Generate the warped cloth
         # For sake of performance, the TPS parameters are predicted on a low resolution image
 
-        low_cloth = torchvision.transforms.functional.resize(cloth, (256, 192),
-                                                             torchvision.transforms.InterpolationMode.BILINEAR,
-                                                             antialias=True)
+        # low_cloth = torchvision.transforms.functional.resize(cloth, (256, 192),
+        #                                                      torchvision.transforms.InterpolationMode.BILINEAR,
+        #                                                      antialias=True)
         low_im_mask = torchvision.transforms.functional.resize(im_mask, (256, 192),
                                                                torchvision.transforms.InterpolationMode.BILINEAR,
                                                                antialias=True)
@@ -272,17 +272,17 @@ def main():
                                                                 torchvision.transforms.InterpolationMode.BILINEAR,
                                                                 antialias=True)
         agnostic = torch.cat([low_im_mask, low_pose_map], 1)
-        low_grid, theta, rx, ry, cx, cy, rg, cg = tps(low_cloth.to(torch.float32), agnostic.to(torch.float32))
+        # low_grid, theta, rx, ry, cx, cy, rg, cg = tps(low_cloth.to(torch.float32), agnostic.to(torch.float32))
 
         # We upsample the grid to the original image size and warp the cloth using the predicted TPS parameters
-        highres_grid = torchvision.transforms.functional.resize(low_grid.permute(0, 3, 1, 2),
-                                                                size=(512, 384),
-                                                                interpolation=torchvision.transforms.InterpolationMode.BILINEAR,
-                                                                antialias=True).permute(0, 2, 3, 1)
+        # highres_grid = torchvision.transforms.functional.resize(low_grid.permute(0, 3, 1, 2),
+        #                                                         size=(512, 384),
+        #                                                         interpolation=torchvision.transforms.InterpolationMode.BILINEAR,
+        #                                                         antialias=True).permute(0, 2, 3, 1)
 
-        warped_cloth = F.grid_sample(cloth.to(torch.float32), highres_grid.to(torch.float32), padding_mode='border')
-        # MUST Provide Precomputed warped clothing image see VitonHDDataset class at line 136 to run next line correctly
-        # warped_cloth = batch.get("warped_cloth").to(weight_dtype) 
+        # warped_cloth = F.grid_sample(cloth.to(torch.float32), highres_grid.to(torch.float32), padding_mode='border')
+        # MUST Provide Precomputed warped clothing image see VitonHDDataset class near line 136 to run next line correctly
+        warped_cloth = batch.get("warped_cloth").to(weight_dtype)
         # Refine the warped cloth using the refinement network
         warped_cloth = torch.cat([im_mask, pose_map, warped_cloth], 1)
         warped_cloth = refinement(warped_cloth.to(torch.float32))
