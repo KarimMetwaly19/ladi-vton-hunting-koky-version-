@@ -107,9 +107,9 @@ class VitonHDDataset(data.Dataset):
                 self.clip_cloth_features_names = pickle.load(f)
 
     def __getitem__(self, index):
-        print(f'current item is {index}')
         c_name = self.c_names[index]
         im_name = self.im_names[index]
+        print(f'c_name={c_name}, im_name={im_name}')
         dataroot = self.dataroot_names[index]
         category = 'upper_body'
 
