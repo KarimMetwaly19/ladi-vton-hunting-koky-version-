@@ -175,7 +175,7 @@ def main():
     else:
         category = ['dresses', 'upper_body', 'lower_body']
 
-    outputlist = ['image', 'pose_map', 'inpaint_mask', 'im_mask', 'category', 'im_name', 'cloth']
+    outputlist = ['image', 'pose_map', 'inpaint_mask', 'im_mask', 'category', 'im_name', 'cloth', 'warped_cloth']
     if args.dataset == "dresscode":
         test_dataset = DressCodeDataset(
             dataroot_path=args.dresscode_dataroot,
