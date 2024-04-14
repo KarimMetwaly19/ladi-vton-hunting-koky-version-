@@ -75,7 +75,7 @@ class VitonHDDataset(data.Dataset):
         if phase == 'train':
             filename = os.path.join(dataroot, f"{phase}_pairs.txt")
         else:
-            filename = '/kaggle/input/warping-results-mody-cloth-mask/testContribution.txt'
+            filename = '/kaggle/input/warping-results-mody-contribution/testContribution.txt'
             # filename = os.path.join(dataroot, f"{phase}_pairs.txt")
 
         with open(filename, 'r') as f:
@@ -140,7 +140,7 @@ class VitonHDDataset(data.Dataset):
                 #     os.path.join(PROJECT_ROOT, 'data', 'warped_cloths_unpaired', 'vitonhd', category,
                 #                  im_name.replace(".jpg", "") + "_" + c_name))
                 print('Precomputed warped clothing image is loaded')
-                warped_cloth = Image.open('/kaggle/input/warping-results-mody-cloth-mask/01181_00.jpg')
+                warped_cloth = Image.open('/kaggle/input/warping-results-mody-contribution/lfgp_warping_result.jpg')
                 warped_cloth = warped_cloth.resize((self.width, self.height))
                 warped_cloth = self.transform(warped_cloth)  # [-1,1]
 
