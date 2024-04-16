@@ -78,7 +78,7 @@ class VitonHDDataset(data.Dataset):
         if phase == 'train':
             filename = os.path.join(dataroot, f"{phase}_pairs.txt")
         else:
-            filename = '/kaggle/input/modyvton-and-karim/test_pairs.txt'
+            filename = '/kaggle/input/high-resolution-viton-zalando-dataset/test_pairs.txt'
             # filename = os.path.join(dataroot, f"{phase}_pairs.txt")
 
         with open(filename, 'r') as f:
