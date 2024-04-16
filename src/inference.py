@@ -106,7 +106,7 @@ def parse_args():
     parser.add_argument("--dataset", type=str, required=True, choices=["dresscode", "vitonhd"], help="dataset to use")
     parser.add_argument("--category", type=str, choices=['all', 'lower_body', 'upper_body', 'dresses'], default='all')
     parser.add_argument("--use_png", default=False, action="store_true", help="Whether to use png or jpg for saving")
-    parser.add_argument("--num_inference_steps", default=50, type=int, help="Number of diffusion steps")
+    parser.add_argument("--num_inference_steps", default=80, type=int, help="Number of diffusion steps")
     parser.add_argument("--guidance_scale", default=7.5, type=float, help="Guidance scale")
     parser.add_argument("--compute_metrics", default=False, action="store_true",
                         help="Compute metrics after generation")
