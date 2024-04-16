@@ -21,6 +21,9 @@ from PIL import Image, ImageDraw
 from src.utils.posemap import get_coco_body25_mapping
 from src.utils.posemap import kpoint_to_heatmap
 
+def crop_image(img, left=0, top=0, right=384, bottom=512):
+    cropped_img = img.crop((top, left, right, bottom))
+    return cropped_img
 
 class VitonHDDataset(data.Dataset):
     def __init__(self,
@@ -136,11 +139,9 @@ class VitonHDDataset(data.Dataset):
 
         if "warped_cloth" in self.outputlist:  # Precomputed warped clothing image
             if self.order == 'unpaired':
-                # warped_cloth = Image.open(
-                #     os.path.join(PROJECT_ROOT, 'data', 'warped_cloths_unpaired', 'vitonhd', category,
-                #                  im_name.replace(".jpg", "") + "_" + c_name))
+                warped_cloth = Image.open(f'/kaggle/input/warping-results/upper___{im_name}___{c_name}'))
                 print('Precomputed warped clothing image is loaded')
-                warped_cloth = Image.open('/kaggle/input/warping-results-mody-contribution/lfgp_warping_result.jpg')
+                warped_cloth = crop_image(warped_cloth)
                 warped_cloth = warped_cloth.resize((self.width, self.height))
                 warped_cloth = self.transform(warped_cloth)  # [-1,1]
 
