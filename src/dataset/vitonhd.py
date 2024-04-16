@@ -139,7 +139,9 @@ class VitonHDDataset(data.Dataset):
 
         if "warped_cloth" in self.outputlist:  # Precomputed warped clothing image
             if self.order == 'unpaired':
-                warped_cloth = Image.open(f'/kaggle/input/warping-results/upper___{im_name}___{c_name}')
+                person_id = im_name.replace('.jpg', '.png')
+                cloth_id = c_name.replace('.jpg', '.png') 
+                warped_cloth = Image.open(f'/kaggle/input/warping-results/upper___{person_id}___{cloth_id}')
                 print('Precomputed warped clothing image is loaded')
                 warped_cloth = crop_image(warped_cloth)
                 warped_cloth = warped_cloth.resize((self.width, self.height))
