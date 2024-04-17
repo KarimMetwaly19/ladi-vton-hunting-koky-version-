@@ -142,7 +142,25 @@ def main():
     if args.seed is not None:
         set_seed(args.seed)
 
-    
+    # Load scheduler, tokenizer and models.
+    val_scheduler = DDIMScheduler.from_pretrained(args.pretrained_model_name_or_path, subfolder="scheduler")
+    val_scheduler.set_timesteps(50, device=device)
+    text_encoder = CLIPTextModel.from_pretrained(args.pretrained_model_name_or_path, subfolder="text_encoder")
+    vae = AutoencoderKL.from_pretrained(args.pretrained_model_name_or_path, subfolder="vae")
+    vision_encoder = CLIPVisionModelWithProjection.from_pretrained("laion/CLIP-ViT-H-14-laion2B-s32B-b79K")
+    processor = AutoProcessor.from_pretrained("laion/CLIP-ViT-H-14-laion2B-s32B-b79K")
+    tokenizer = CLIPTokenizer.from_pretrained(args.pretrained_model_name_or_path, subfolder="tokenizer")
+
+    # Load the trained models from the hub
+    unet = torch.hub.load(repo_or_dir='miccunifi/ladi-vton', source='github', model='extended_unet',
+                          dataset=args.dataset)
+    emasc = torch.hub.load(repo_or_dir='miccunifi/ladi-vton', source='github', model='emasc', dataset=args.dataset)
+    inversion_adapter = torch.hub.load(repo_or_dir='miccunifi/ladi-vton', source='github', model='inversion_adapter',
+                                       dataset=args.dataset)
+    tps, refinement = torch.hub.load(repo_or_dir='miccunifi/ladi-vton', source='github', model='warping_module',
+                                     dataset=args.dataset)
+
+    int_layers = [1, 2, 3, 4, 5]
 
     # Enable xformers memory efficient attention if requested
     if args.enable_xformers_memory_efficient_attention:
@@ -180,10 +198,67 @@ def main():
     else:
         raise NotImplementedError(f"Dataset {args.dataset} not implemented")
 
+    test_dataloader = torch.utils.data.DataLoader(
+        test_dataset,
+        shuffle=False,
+        batch_size=args.batch_size,
+        num_workers=args.num_workers,
+    )
+
+    # Cast to weight_dtype
+    weight_dtype = torch.float32
+    if args.mixed_precision == 'fp16':
+        weight_dtype = torch.float16
+    elif args.mixed_precision == 'bf16':
+        weight_dtype = torch.bfloat16
+
+    text_encoder.to(device, dtype=weight_dtype)
+    vae.to(device, dtype=weight_dtype)
+    emasc.to(device, dtype=weight_dtype)
+    inversion_adapter.to(device, dtype=weight_dtype)
+    unet.to(device, dtype=weight_dtype)
+    tps.to(device, dtype=torch.float32)
+    refinement.to(device, dtype=torch.float32)
+    vision_encoder.to(device, dtype=weight_dtype)
+
+    # Set to eval mode
+    text_encoder.eval()
+    vae.eval()
+    emasc.eval()
+    inversion_adapter.eval()
+    unet.eval()
+    tps.eval()
+    refinement.eval()
+    vision_encoder.eval()
+
+    # Create the pipeline
+    val_pipe = StableDiffusionTryOnePipeline(
+        text_encoder=text_encoder,
+        vae=vae,
+        tokenizer=tokenizer,
+        unet=unet,
+        scheduler=val_scheduler,
+        emasc=emasc,
+        emasc_int_layers=int_layers,
+    ).to(device)
+
+    # Prepare the dataloader and create the output directory
+    test_dataloader = accelerator.prepare(test_dataloader)
     save_dir = os.path.join(args.output_dir, args.test_order)
     os.makedirs(save_dir, exist_ok=True)
+    generator = torch.Generator("cuda").manual_seed(args.seed)
 
-    
+    # Free up memory
+    del val_pipe
+    del text_encoder
+    del vae
+    del emasc
+    del unet
+    del tps
+    del refinement
+    del vision_encoder
+    torch.cuda.empty_cache()
+
     # Compute metrics if requested
     if args.compute_metrics:
         metrics = compute_metrics(save_dir, args.test_order, args.dataset, args.category, ['all'],
