@@ -260,7 +260,7 @@ def main():
     torch.cuda.empty_cache()
 
     # Compute metrics if requested
-    if args.compute_metrics:
+    if True:
         metrics = compute_metrics(save_dir, args.test_order, args.dataset, args.category, ['all'],
                                   args.dresscode_dataroot, args.vitonhd_dataroot)
 
