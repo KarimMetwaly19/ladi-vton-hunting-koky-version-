@@ -78,7 +78,7 @@ def parse_args():
     )
 
     parser.add_argument("--seed", type=int, default=1234, help="A seed for reproducible training.")
-    parser.add_argument("--batch_size", type=int, default=4, help="Batch size to use.")
+    parser.add_argument("--batch_size", type=int, default=2, help="Batch size to use.")
 
     parser.add_argument(
         "--mixed_precision",
